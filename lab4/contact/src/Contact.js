@@ -1,8 +1,13 @@
-import { useEffect, useState} from "react";
-import { useDispatch, useSelector } from "react-redux";
-import { View, FlatList } from "react-native";
+import 'react-native-gesture-handler';
+import React from 'react';
+import {Navigation} from 'react-native-navigation';
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector, shallowEqual } from "react-redux";
+import { View, FlatList,Text } from "react-native";
 import ContactListItem from "./ContactListItem";
-import Provider from "react-redux";
+import { mapContacts } from './Store';
+import { fetchContactsSuccess } from './Store';
+import _ from 'lodash';
 
 const keyExtractor = ({ phone }) => phone;
 
@@ -12,36 +17,45 @@ const fetchContacts = async () => {
     return ContactData.results.map(mapContacts);
 };
 
-const  Contacts = ( navigation) => {
-    const { contacts } = useSelector((state) => state);
+const Contacts = ({navigation}) => {
+    const  {contacts}  = useSelector(state => state, shallowEqual);
+
+    const [loading, setLoading] = useState(true);
     const dispatch = useDispatch();
     useEffect(() => {
         fetchContacts()
             .then(
                 contacts => {
                     dispatch(fetchContactsSuccess(contacts));
-                }
+                    setLoading(false);
+                },
             )
             .catch(
                 e => {
                     console.log(e);
+                    setLoading(false);
                 }
             )
 
-    }, []);
+    },[]);
+
+    if (loading) {
+        return <Text>Loading...</Text>;
+    }
 
     const renderContacts = ({ item }) => {
-        const { name, avatar, phone } = item;
+        const { name, picture, phone } = item;
         return <ContactListItem
             name={name}
-            avatar={avatar}
+            avatar={picture}
             phone={phone}
-            onPress={() => navigation.navigate("ProfileContact", { contact: item })}
+            onPress={() => navigation.navigate('ProfileContact', { contact:item })}
         />;
+        
     };
 
     return (
-        <View style={{ justifyContent: 'center', flex: 1, paddingLeft: 10, paddingRight: 10}}>
+        <View style={{ justifyContent: 'center', flex: 1, paddingLeft: 10, paddingRight: 10 }}>
             <FlatList
                 data={contacts}
                 renderItem={renderContacts}
@@ -51,4 +65,4 @@ const  Contacts = ( navigation) => {
     );
 }
 
-    export default Contacts;
+export default Contacts;

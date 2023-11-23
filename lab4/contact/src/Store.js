@@ -1,9 +1,10 @@
 import { createSlice, configureStore } from "@reduxjs/toolkit";
-import { v4 } from "uuid";
+import 'react-native-get-random-values';
+import { v4 as uuidv4 } from 'uuid';
 export const mapContacts = (contact) => {
     const { name, picture, phone, cell, email } = contact;
     return {
-        id: v4(),
+        id: uuidv4(),
         name: name.first + " " + name.last,
         picture: picture.large,
         phone,

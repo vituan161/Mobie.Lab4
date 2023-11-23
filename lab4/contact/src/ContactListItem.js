@@ -41,7 +41,7 @@ const styles = StyleSheet.create({
     },
     title:{
         color: 'black',
-        fontweight: 'bold',
+        fontWeight: 'bold',
         fontSize: 16,
     },
     subtitle: {
